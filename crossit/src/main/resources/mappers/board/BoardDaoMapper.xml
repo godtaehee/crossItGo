@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace ="com.crossit.dao.BoardDao">
+
+<sql id="boardColums">
+		
+		title,
+		content,
+		hit,
+		category,
+		secret_yn,
+		delete_yn,
+		register_date,
+		update_date,
+		delete_date,
+		member_id,
+		imgfileName
+	</sql>
+
+	<select id ="getList" resultType="com.crossit.entity.IndexView">
+		SELECT * FROM IndexView
+	</select>
+	
+	
+	<insert id ="insert" parameterType="Board">
+		INSERT INTO board(
+			<include refid="boardColums" />
+		) VALUES(
+		
+		#{title}
+		,#{content}
+		,0
+		,1
+		,'N'
+		,'N'
+		,NOW()
+		,NOW()
+		,NOW()
+		,1
+		,'S'
+	)
+	</insert>
+	
+	<delete id ="delete">
+	</delete>
+	
+
+</mapper>
