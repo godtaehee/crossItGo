@@ -1,6 +1,7 @@
 package com.crossit.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.crossit.entity.Board;
+import com.crossit.entity.FileVo;
 import com.crossit.entity.IndexView;
 import com.crossit.service.BoardService;
 
@@ -66,14 +68,8 @@ public class BoardController {
 		return "redirect:index";
 	}
 	
-	//업로드하기
-	public ResponseEntity addNewArticle(MultipartHttpServletRequest multipartRequest, HttpServletResponse response)
-	throws Exception{
-		
-		
-		
-		return fileList;
-	}
+	
+
 	
 	
 	

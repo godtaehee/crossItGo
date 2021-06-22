@@ -1,7 +1,6 @@
 package com.crossit.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.crossit.entity.Board;
 import com.crossit.entity.FileVo;
@@ -19,8 +18,6 @@ public interface BoardService {
 	
 	//파일 업로드 메서드 추가
 	int fileInsert(FileVo file);
-
-	int addNewArticle(Map articleMap) throws Exception;
 	
 	
 

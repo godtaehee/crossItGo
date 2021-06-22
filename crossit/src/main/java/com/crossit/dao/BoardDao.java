@@ -1,10 +1,9 @@
 package com.crossit.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+
 
 import com.crossit.entity.Board;
 import com.crossit.entity.FileVo;
@@ -22,7 +21,7 @@ public interface BoardDao {
 	Board get(int id); 
 	
 	int update(Board board);
-	int insert(Map articleMap);
+	int insert(Board board);
 	int delete(int id);
 
 	

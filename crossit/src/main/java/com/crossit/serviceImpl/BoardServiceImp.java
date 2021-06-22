@@ -1,7 +1,6 @@
 package com.crossit.serviceImpl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,18 +43,10 @@ public class BoardServiceImp implements BoardService {
 		
 	}
 
-	//파일 업로드 추가 
-	//글의 정보를 저장한 후에,글 번호를 가져온다. 
 	@Override
-	public int addNewArticle(Map articleMap) throws Exception {
-		//글 정보를 저장한다. 
-		int articleNo =boardDao.insert(articleMap);
-		//글 번호를 articlMap에 저장한 후에 
-		articleMap.put("articleNo", articleNo);
-		//글 이미지 정보를 저장한다. 
-		boardDao.fileInsert(articleMap);
+	public int fileInsert(FileVo file) {
 		
-		return articleNO;
+		return boardDao.fileInsert(file);
 	}
 
 }

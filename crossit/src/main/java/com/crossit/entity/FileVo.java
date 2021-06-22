@@ -15,5 +15,4 @@ public class FileVo {
 	private String regDate; //등록 일자 
 	
 
-
 }
