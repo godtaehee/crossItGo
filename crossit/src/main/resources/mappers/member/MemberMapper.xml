@@ -53,7 +53,20 @@
 			email = '${email}'
 	</select>
 	
-	<select id="findMemberByEmail" parameterType="String" resultType="int">
+	<select id="signIn" parameterType="String" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			member
+		WHERE
+			email = '${email}'
+		AND
+			password = '${password}'
+	</select>
+	
+	
+	
+<!-- 	<select id="findMemberByEmail" parameterType="String" resultType="int">
 		SELECT
 			count(*)
 		FROM
@@ -62,7 +75,7 @@
 			email = '${email}'
 		AND
 			password = '${password}';
-	</select>
+	</select> -->
 
 	<!-- <select id="selectBoardDetail" parameterType="long" resultType="BoardDTO">
 		SELECT

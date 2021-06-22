@@ -27,10 +27,9 @@ public class MemberServiceImpl implements MemberService{
 	
 	@Override
 	public int signIn(Member member) {
-		
+		int result = memberDao.signIn(member);
 		
 		return memberDao.signIn(member);
-		
 	}
 
 	@Override
