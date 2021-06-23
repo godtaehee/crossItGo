@@ -1,48 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace ="com.crossit.dao.BoardDao">
 
-<sql id="boardColums">
-		
-		title,
-		content,
-		hit,
-		category,
-		secret_yn,
-		delete_yn,
-		register_date,
-		update_date,
-		delete_date,
-		member_id,
-		imgfileName
+<mapper namespace="com.crossit.dao.BoardDao">
+
+	<sql id="boardColumns">
+		  id
+		, title
+		, content
+		, writer
+		, view_cnt
+		, notice_yn
+		, secret_yn
+		, delete_yn
+		, insert_time
+		, update_time
+		, delete_time
 	</sql>
 
-	<select id ="getList" resultType="com.crossit.entity.IndexView">
-		SELECT * FROM IndexView
-	</select>
-	
-	
-	<insert id ="insert" parameterType="Board">
-		INSERT INTO board(
-			<include refid="boardColums" />
-		) VALUES(
-		
-		#{title}
-		,#{content}
-		,0
-		,1
-		,'N'
-		,'N'
-		,NOW()
-		,NOW()
-		,NOW()
-		,1
-		,'S'
-	)
+	<insert id="insertBoard" parameterType="BoardDTO">
+		INSERT INTO board (
+			<include refid="boardColumns" />
+		) VALUES (
+			  #{id}
+			, #{title}
+			, #{content}
+			, #{writer}
+			, 0
+			, IFNULL(#{noticeYn}, 'N')
+			, IFNULL(#{secretYn}, 'N')
+			, 'N'
+			, NOW()
+			, NULL
+			, NULL
+		)
 	</insert>
-	
-	<delete id ="delete">
-	</delete>
-	
+
+	<select id="selectBoardDetail" parameterType="long" resultType="BoardDTO">
+		SELECT
+			<include refid="boardColumns" />
+		FROM
+			board
+		WHERE
+			delete_yn = 'N'
+		AND
+			id = #{id}
+	</select>
+
+	<update id="updateBoard" parameterType="BoardDTO">
+		UPDATE board
+		SET
+			  update_time = NOW()
+			, title = #{title}
+			, content = #{content}
+			, writer = #{writer}
+			, notice_yn = IFNULL(#{noticeYn}, 'N')
+			, secret_yn = IFNULL(#{secretYn}, 'N')
+		WHERE
+			id = #{id}
+	</update>
+
+	<update id="deleteBoard" parameterType="long">
+		UPDATE board
+		SET
+			  delete_yn = 'Y'
+			, delete_time = NOW()
+		WHERE
+			id = #{id}
+	</update>
+
+	<select id="selectBoardList" parameterType="BoardDTO" resultType="BoardDTO">
+		SELECT
+			<include refid="boardColumns" />
+		FROM
+			board
+		WHERE
+			delete_yn = 'N'
+		<include refid="CommonMapper.search" />
+		ORDER BY
+			notice_yn ASC,
+			id DESC,
+			insert_time DESC
+		<include refid="CommonMapper.paging" />
+	</select>
+
+	<select id="selectBoardTotalCount" parameterType="Criteria" resultType="long">
+		SELECT
+			COUNT(*)
+		FROM
+			board
+		WHERE
+			delete_yn = 'N'
+		<include refid="CommonMapper.search" />
+	</select>
 
 </mapper>

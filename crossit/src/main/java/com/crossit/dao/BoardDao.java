@@ -4,30 +4,24 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-
-import com.crossit.entity.Board;
-import com.crossit.entity.FileVo;
-import com.crossit.entity.IndexView;
+import com.crossit.domain.BoardDTO;
+import com.crossit.paging.Criteria;
 
 
 @Mapper
 public interface BoardDao {
 
-	//글의 목록을 조회
-	//글을 등록, 수정, 삭제
-	
-	List<IndexView> getList();
+	public int insertBoard(BoardDTO params);
 
-	Board get(int id); 
-	
-	int update(Board board);
-	int insert(Board board);
-	int delete(int id);
+	public BoardDTO selectBoardDetail(Long idx);
 
-	
-	
-	//파일 업로드 메서드 
-	int fileInsert(FileVo file);
+	public int updateBoard(BoardDTO params);
+
+	public int deleteBoard(Long idx);
+
+	public List<BoardDTO> selectBoardList(BoardDTO params);
+
+	public Long selectBoardTotalCount(BoardDTO params);
 	
 	
 

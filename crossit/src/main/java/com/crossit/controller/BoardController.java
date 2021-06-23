@@ -1,83 +1,104 @@
 package com.crossit.controller;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.crossit.entity.Board;
-import com.crossit.entity.FileVo;
-import com.crossit.entity.IndexView;
+import com.crossit.constant.Method;
+import com.crossit.domain.BoardDTO;
 import com.crossit.service.BoardService;
-
+import com.crossit.util.UiUtils;
 
 @Controller
-//@RequestMapping("/index/")
-public class BoardController {
-	
+public class BoardController extends UiUtils {
+
 	@Autowired
-	private BoardService service;
+	private BoardService boardService;
+
+	@GetMapping("/board/write")
+	public String openBoardWrite(@ModelAttribute("params") BoardDTO params, @RequestParam(value = "id", required = false) Long id, Model model) {
+		if (id == null) {
+			model.addAttribute("board", new BoardDTO());
+		} else {
+			BoardDTO board = boardService.getBoardDetail(id);
+			if (board == null || "Y".equals(board.getDeleteYn())) {
+				return showMessageWithRedirect("없는 게시글이거나 이미 삭제된 게시글입니다.", "/board/list", Method.GET, null, model);
+			}
+			model.addAttribute("board", board);
+		}
+
+		return "board/write";
+	}
 	
+	@PostMapping("/board/register")
+	public String registerBoard(@ModelAttribute("params") final BoardDTO params, Model model) {
+		Map<String, Object> pagingParams = getPagingParams(params);
+		try {
+			boolean isRegistered = boardService.registerBoard(params);
+			if (isRegistered == false) {
+				return showMessageWithRedirect("게시글 등록에 실패하였습니다.", "/board/list", Method.GET, pagingParams, model);
+			}
+		} catch (DataAccessException e) {
+			return showMessageWithRedirect("데이터베이스 처리 과정에 문제가 발생하였습니다.", "/board/list", Method.GET, pagingParams, model);
+
+		} catch (Exception e) {
+			return showMessageWithRedirect("시스템에 문제가 발생하였습니다.", "/board/list", Method.GET, pagingParams, model);
+		}
+
+		return showMessageWithRedirect("게시글 등록이 완료되었습니다.", "/board/list", Method.GET, pagingParams, model);
+	}
 
 	
-	//인덱스화면에 필요한 리스트 불러오기
-	@RequestMapping("/index")
-	public String list(Model model) {
-		
-		List<IndexView>list = service.getList();
-		model.addAttribute("list",list);
-		return "index";
-	}
-	
-	@RequestMapping("detail")
-	public String detail() {
-		
-		Board board= service.get(1);
-		return "index";
-	}
-	
-	
-	//게시판 글쓰기 폼 
-	@GetMapping("/post")
-	public String post(Model model , Board board) {
-	
-		return "board/articleForm";
-	}
-	
-	//게시판 글쓰기 
-	@PostMapping("/post")
-	public String write(Model model, Board board) {
-		service.boardWirte(board);
-		model.addAttribute("board",board);
-		
-		return "redirect:index";
-	}
-	
-	
+	@GetMapping("/board/list")
+	public String openBoardList(@ModelAttribute("params") BoardDTO params, Model model) {
+		List<BoardDTO> boardList = boardService.getBoardList(params);
+		model.addAttribute("boardList", boardList);
 
+		return "board/list";
+	}
 	
-	
-	
+	@GetMapping("/board/view")
+	public String openBoardDetail(@ModelAttribute("params") BoardDTO params, @RequestParam(value = "id", required = false) Long id, Model model) {
+		if (id == null) {
+			return showMessageWithRedirect("올바르지 않은 접근입니다.", "/board/list", Method.GET, null, model);
+		}
 
+		BoardDTO board = boardService.getBoardDetail(id);
+		if (board == null || "Y".equals(board.getDeleteYn())) {
+			return showMessageWithRedirect("없는 게시글이거나 이미 삭제된 게시글입니다.", "/board/list", Method.GET, null, model);
+		}
+		model.addAttribute("board", board);
+
+		return "board/view";
+	}
+	
+	@PostMapping("/board/delete")
+	public String deleteBoard(@ModelAttribute("params") BoardDTO params, @RequestParam(value = "id", required = false) Long id, Model model) {
+		if (id == null) {
+			return showMessageWithRedirect("올바르지 않은 접근입니다.", "/board/list", Method.GET, null, model);
+		}
+
+		Map<String, Object> pagingParams = getPagingParams(params);
+		try {
+			boolean isDeleted = boardService.deleteBoard(id);
+			if (isDeleted == false) {
+				return showMessageWithRedirect("게시글 삭제에 실패하였습니다.", "/board/list", Method.GET, pagingParams, model);
+			}
+		} catch (DataAccessException e) {
+			return showMessageWithRedirect("데이터베이스 처리 과정에 문제가 발생하였습니다.", "/board/list", Method.GET, pagingParams, model);
+
+		} catch (Exception e) {
+			return showMessageWithRedirect("시스템에 문제가 발생하였습니다.", "/board/list", Method.GET, pagingParams, model);
+		}
+
+		return showMessageWithRedirect("게시글 삭제가 완료되었습니다.", "/board/list", Method.GET, pagingParams, model);
+	}
 }
-		
-	
-	
-	
-	
-	
