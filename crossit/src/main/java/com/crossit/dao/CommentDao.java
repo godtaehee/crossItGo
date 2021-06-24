@@ -22,4 +22,3 @@ public interface CommentDao {
 	public int selectCommentTotalCount(CommentDTO params);
 
 }
- 
